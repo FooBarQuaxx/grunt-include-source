@@ -59,7 +59,8 @@ module.exports = function(grunt) {
 		'haml': parseSource('HAML', /-#\s+include:\s+(.*)/gi),
 		'jade': parseSource('JADE', /\/\/-?\s+include:\s+(.*)/gi),
 		'scss': parseSource('SASS', /\/\/\s+include:\s+(.*)/gi),
-		'less': parseSource('LESS', /\/\/\s+include:\s+(.*)/gi)
+		'less': parseSource('LESS', /\/\/\s+include:\s+(.*)/gi),
+		'erb': parseSource('ERB', /<!---?\s*include:\s+(.*)\s*-?--\s*>/gi),
 	};
 
 	var endMarkerParsers = {
@@ -67,7 +68,8 @@ module.exports = function(grunt) {
 		'haml': findEndMarker('HAML', /-#\s+\/include/i),
 		'jade': findEndMarker('JADE', /\/\/-?\s+\/include/i),
 		'scss': findEndMarker('SASS', /\/\/\s+\/include/i),
-		'less': findEndMarker('LESS', /\/\/\s+\/include/i)
+		'less': findEndMarker('LESS', /\/\/\s+\/include/i),
+		'erb': findEndMarker('ERB', /<!---?\s*\/include\s+-?--\>/i),
 	};
 
 	var templates = {
@@ -95,7 +97,12 @@ module.exports = function(grunt) {
 		{
 			'less': '@import "{filePath}";',
 			'css': '@import "{filePath}";'
-		}
+		},
+		'erb':
+		{
+			'js': '<script src="{filePath}"></script>',
+			'css': '<link href="{filePath}" rel="stylesheet" type="text/css">'
+		},
 	};
 
 	var resolveFiles = function (basePath, includeOptions) {
